@@ -1,0 +1,170 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "QueryMsg",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": [
+        "denom"
+      ],
+      "properties": {
+        "denom": {
+          "type": "object",
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "energy_transfer_offer"
+      ],
+      "properties": {
+        "energy_transfer_offer": {
+          "type": "object",
+          "required": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "all_energy_transfer_offers"
+      ],
+      "properties": {
+        "all_energy_transfer_offers": {
+          "type": "object",
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "energy_transfer"
+      ],
+      "properties": {
+        "energy_transfer": {
+          "type": "object",
+          "required": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "all_energy_transfers"
+      ],
+      "properties": {
+        "all_energy_transfers": {
+          "type": "object",
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "energy_transfer_offers"
+      ],
+      "properties": {
+        "energy_transfer_offers": {
+          "type": "object",
+          "required": [
+            "owner"
+          ],
+          "properties": {
+            "owner": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "own_energy_transfers"
+      ],
+      "properties": {
+        "own_energy_transfers": {
+          "type": "object",
+          "required": [
+            "driver",
+            "transfer_status"
+          ],
+          "properties": {
+            "driver": {
+              "type": "string"
+            },
+            "transfer_status": {
+              "$ref": "#/definitions/TransferStatus"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "energy_transfers"
+      ],
+      "properties": {
+        "energy_transfers": {
+          "type": "object",
+          "required": [
+            "owner"
+          ],
+          "properties": {
+            "owner": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  ],
+  "definitions": {
+    "TransferStatus": {
+      "type": "string",
+      "enum": [
+        "Requested",
+        "Ongoing",
+        "Paid",
+        "Cancelled",
+        "Unspecified"
+      ]
+    }
+  }
+}
