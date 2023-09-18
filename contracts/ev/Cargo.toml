@@ -1,6 +1,6 @@
 [package]
 name = "ev"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Dawid Kruk <dawid.kruk@ovoo.pl>"]
 edition = "2021"
 

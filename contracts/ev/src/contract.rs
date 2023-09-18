@@ -1,11 +1,12 @@
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::entry_point;
-use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Reply, Response, StdResult, to_binary};
+use cosmwasm_std::{Binary, Decimal, Deps, DepsMut, Env, MessageInfo, Order, Reply, Response, StdResult, to_binary};
+use cosmwasm_std::Order::Ascending;
 use cw2::{set_contract_version, get_contract_version};
 use crate::{execute, query};
 use crate::error::ContractError;
-use crate::msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg};
-use crate::state::{DENOM, ENERGY_TRANSFER_COUNT, ENERGY_TRANSFER_OFFER_COUNT};
+use crate::msg::{EnergyTransferOffer, ExecuteMsg, InstantiateMsg, Location, MigrateMsg, OldEnergyTransferOffer, QueryMsg};
+use crate::state::{DENOM, ENERGY_TRANSFER_COUNT, ENERGY_TRANSFER_OFFER_COUNT, ENERGY_TRANSFER_OFFERS, OLD_ENERGY_TRANSFER_OFFERS};
 use semver::Version;
 const CONTRACT_NAME: &str = "crates.io:ev";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -109,7 +110,30 @@ pub fn migrate(deps: DepsMut, _env: Env, _msg: MigrateMsg) -> Result<Response, C
 
     if storage_version < version {
         set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
+        // Read old data
+        let data = OLD_ENERGY_TRANSFER_OFFERS
+            .range(deps.storage, None, None, Ascending)
+            .collect::<StdResult<Vec<(u64, OldEnergyTransferOffer)>>>()?;
 
+        for (key, old_offer) in data {
+            let new_location = Location {
+                latitude: old_offer.location.latitude.parse::<Decimal>().map_err(|_| ContractError::CustomError{ val: "Invalid latitude".to_string() })?,
+                longitude: old_offer.location.longitude.parse::<Decimal>().map_err(|_| ContractError::CustomError{ val: "Invalid longitude".to_string() })?,
+            };
+
+            let new_offer = EnergyTransferOffer {
+                id: old_offer.id,
+                owner: old_offer.owner,
+                charger_id: old_offer.charger_id,
+                charger_status: old_offer.charger_status,
+                location: new_location,
+                tariff: old_offer.tariff,
+                name: old_offer.name,
+                plug_type: old_offer.plug_type,
+            };
+
+            ENERGY_TRANSFER_OFFERS.save(deps.storage, key, &new_offer)?;
+        }
     }
     Ok(Response::default())
 }
@@ -171,7 +195,7 @@ mod tests {
             addr,
             &ExecuteMsg::PublishEnergyTransferOffer {
                 charger_id: "charger1".to_string(),
-                location: Location { latitude: "60".to_string(), longitude: "60".to_string() },
+                location: Location { latitude: "60".to_string().parse().unwrap(), longitude: "60".to_string().parse().unwrap() },
                 tariff: 50,
                 name: "offer1".to_string(),
                 plug_type: PlugType::Type1,
@@ -609,7 +633,7 @@ mod tests {
             addr.clone(),
             &ExecuteMsg::PublishEnergyTransferOffer {
                 charger_id: "".to_string(),
-                location: Location { latitude: "60".to_string(), longitude: "60".to_string() },
+                location: Location { latitude: "60".to_string().parse().unwrap(), longitude: "60".to_string().parse().unwrap() },
                 tariff: 50,
                 name: "offer2".to_string(),
                 plug_type: PlugType::Type1,
@@ -628,7 +652,7 @@ mod tests {
             addr.clone(),
             &ExecuteMsg::PublishEnergyTransferOffer {
                 charger_id: "charger2".to_string(),
-                location: Location { latitude: "60".to_string(), longitude: "60".to_string() },
+                location: Location { latitude: "60".to_string().parse().unwrap(), longitude: "60".to_string().parse().unwrap() },
                 tariff: 0,
                 name: "".to_string(),
                 plug_type: PlugType::Type1,

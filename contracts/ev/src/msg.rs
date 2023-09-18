@@ -1,6 +1,6 @@
 use std::fmt;
 use cosmwasm_schema::{cw_serde, QueryResponses};
-use cosmwasm_std::Timestamp;
+use cosmwasm_std::{Decimal, Timestamp};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -46,6 +46,23 @@ pub struct EnergyTransferOffer {
 
 #[cw_serde]
 pub struct Location {
+    pub latitude: Decimal,
+    pub longitude: Decimal,
+}
+
+#[cw_serde]
+pub struct OldEnergyTransferOffer {
+    pub id: u64,
+    pub owner: String,
+    pub charger_id: String,
+    pub charger_status: ChargerStatus,
+    pub location: OldLocation,
+    pub tariff: u64,
+    pub name: String,
+    pub plug_type: PlugType,
+}
+#[cw_serde]
+pub struct OldLocation {
     pub latitude: String,
     pub longitude: String,
 }
