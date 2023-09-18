@@ -103,15 +103,13 @@ pub fn reply(_deps: DepsMut, _env: Env, _msg: Reply) -> Result<Response, Contrac
 /// - only contract admin can migrate, so admin has to be set at contract initiation time
 /// Handling contract execution
 #[cfg_attr(not(feature = "library"), entry_point)]
-pub fn migrate(deps: DepsMut, _env: Env, msg: MigrateMsg) -> Result<Response, ContractError> {
+pub fn migrate(deps: DepsMut, _env: Env, _msg: MigrateMsg) -> Result<Response, ContractError> {
     let version: Version = CONTRACT_VERSION.parse()?;
     let storage_version: Version = get_contract_version(deps.storage)?.version.parse()?;
 
     if storage_version < version {
         set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
 
-        // If state structure changed in any contract version in the way migration is needed, it
-        // should occur here
     }
     Ok(Response::default())
 }

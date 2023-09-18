@@ -115,7 +115,7 @@ impl fmt::Display for TransferStatus {
 }
 
 #[cw_serde]
-pub enum MigrateMsg {}
+pub struct MigrateMsg {}
 
 #[cw_serde]
 #[derive(QueryResponses)]
