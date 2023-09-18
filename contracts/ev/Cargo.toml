@@ -1,6 +1,6 @@
 [package]
 name = "ev"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Dawid Kruk <dawid.kruk@ovoo.pl>"]
 edition = "2021"
 
@@ -29,6 +29,7 @@ optimize = """docker run --rm -v "$(pwd)":/code \
 """
 
 [dependencies]
+semver = "1"
 cosmwasm-schema = "1.1.2"
 cosmwasm-std = "1.1.2"
 cosmwasm-storage = "1.1.2"

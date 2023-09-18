@@ -45,4 +45,14 @@ pub enum ContractError {
 
     #[error("Invalid funds. Expected {0} got {1}")]
     InvalidFunds(String, String),
+
+    #[error("Semver parsing error: {0}")]
+    SemVer(String),
+}
+
+
+impl From<semver::Error> for ContractError {
+    fn from(err: semver::Error) -> Self {
+        Self::SemVer(err.to_string())
+    }
 }
